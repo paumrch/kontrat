@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
-import { ExternalLink, Filter, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ExternalLink, Filter, ChevronLeft, ChevronRight, MapPin, Tag, Building2 } from 'lucide-react'
 import { Database } from '@/types/database.types'
 import { formatCPVDisplay } from '@/utils/cpv'
 import { useCPVDescriptions } from '@/hooks/useCPVDescriptions'
@@ -393,7 +393,7 @@ export default function ContentPage() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-3">
-                          <h3 className="text-base font-medium text-gray-900 leading-tight pr-4">
+                          <h3 className="text-sm font-medium text-gray-900 leading-tight pr-4">
                             {licitacion.project_name}
                           </h3>
                           <div className="text-right flex-shrink-0">
@@ -409,7 +409,8 @@ export default function ContentPage() {
                         {/* Información principal: Descripción CPV y Provincia */}
                         <div className="mb-4">
                           {licitacion.cpv_code && (
-                            <div className="mb-2">
+                            <div className="mb-2 flex items-start space-x-2">
+                              <Tag className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
                               <span className="text-sm font-medium text-gray-900">
                                 {cpvDescriptions.get(licitacion.cpv_code)?.description || 
                                  formatCPVDisplay(licitacion.cpv_code).description}
@@ -417,8 +418,9 @@ export default function ContentPage() {
                             </div>
                           )}
                           {licitacion.territory_name && (
-                            <div className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800">
-                              {licitacion.territory_name}
+                            <div className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800 space-x-1">
+                              <MapPin className="w-3 h-3" />
+                              <span>{licitacion.territory_name}</span>
                             </div>
                           )}
                         </div>
@@ -427,7 +429,10 @@ export default function ContentPage() {
                           <div className="flex-1">
                             {licitacion.contracting_party_name && (
                               <div className="mb-3">
-                                <dt className="text-sm font-medium text-gray-500">Organismo</dt>
+                                <dt className="text-sm font-medium text-gray-500 flex items-center space-x-1">
+                                  <Building2 className="w-3 h-3" />
+                                  <span>Organismo</span>
+                                </dt>
                                 <dd className="mt-1 text-sm text-gray-900">{licitacion.contracting_party_name}</dd>
                               </div>
                             )}

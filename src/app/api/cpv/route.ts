@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { cleanCPVCode } from '@/utils/cpv'
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,8 +10,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'CPV code is required' }, { status: 400 })
     }
     
-    // Limpiar el código CPV
-    const cleanCode = code.replace(/[-\s]/g, '')
+    // Usar la función mejorada para limpiar el código CPV
+    const cleanCode = cleanCPVCode(code)
+    
+    if (!cleanCode) {
+      return NextResponse.json({
+        code: code,
+        description: 'Código CPV inválido'
+      })
+    }
     
     try {
       // Importar dinámicamente la librería cpv-eu
