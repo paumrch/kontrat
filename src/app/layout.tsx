@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { fonts } from "@/lib/fonts";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
+import Footer from "@/components/footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,10 +24,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={fonts} suppressHydrationWarning>
-      <body>
+      <body className="min-h-screen flex flex-col">
         <AuthProvider>
           <Header />
-          <main>{children}</main>
+          <main className="flex-1">{children}</main>
+          <Footer />
         </AuthProvider>
       </body>
     </html>

@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
-import { ExternalLink, Filter, ChevronLeft, ChevronRight, MapPin, Tag, Building2 } from 'lucide-react'
+import { ExternalLink, Filter, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Database } from '@/types/database.types'
 import { formatCPVDisplay } from '@/utils/cpv'
 import { useCPVDescriptions } from '@/hooks/useCPVDescriptions'
@@ -232,7 +232,7 @@ export default function ContentPage() {
             {/* Filtro CPV con búsqueda */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-gray-900">Categorías CPV</label>
+                <label className="text-xs font-medium text-gray-900">Categorías CPV</label>
                 {filters.cpvCodes.length > 0 && (
                   <button
                     onClick={() => setFilters(prev => ({ ...prev, cpvCodes: [] }))}
@@ -277,7 +277,7 @@ export default function ContentPage() {
                           className="mt-0.5 rounded border-gray-300 text-gray-600 focus:ring-gray-500"
                         />
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm text-gray-900 font-medium leading-tight">
+                          <div className="text-xs text-gray-900 font-medium leading-tight">
                             {cpvInfo.description}
                           </div>
                           <div className="text-xs text-gray-500">
@@ -293,7 +293,7 @@ export default function ContentPage() {
 
             {/* Filtro Provincia */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Provincia</label>
+              <label className="text-xs font-medium text-gray-900">Provincia</label>
               <Select value={filters.province || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, province: value === 'all' ? '' : value }))}>
                 <SelectTrigger className="bg-white border-gray-200 text-gray-900">
                   <SelectValue placeholder="Todas las provincias" />
@@ -309,9 +309,9 @@ export default function ContentPage() {
 
             {/* Filtro Económico */}
             <div className="space-y-4">
-              <label className="text-sm font-medium text-gray-900">Rango de Importe</label>
+              <label className="text-xs font-medium text-gray-900">Importe</label>
               <div className="space-y-3">
-                <div className="flex justify-between text-sm text-gray-600">
+                <div className="flex justify-between text-xs text-gray-600">
                   <span>{formatCurrency(filters.minAmount)}</span>
                   <span>{formatCurrency(filters.maxAmount)}</span>
                 </div>
@@ -332,7 +332,7 @@ export default function ContentPage() {
             <Button 
               variant="outline" 
               onClick={clearFilters} 
-              className="w-full border-gray-200 text-gray-900 hover:bg-gray-50"
+              className="w-full border-gray-200 text-gray-900 hover:bg-gray-50 text-xs"
             >
               Limpiar Filtros
             </Button>
@@ -386,66 +386,61 @@ export default function ContentPage() {
                 {paginatedLicitaciones.map((licitacion, index) => (
                   <div 
                     key={licitacion.id} 
-                    className={`px-8 py-6 border-b border-gray-200 hover:bg-gray-50 transition-colors ${
+                    className={`px-6 py-5 border-b border-gray-200 hover:bg-gray-50 transition-colors ${
                       index === paginatedLicitaciones.length - 1 ? 'border-b-0' : ''
                     }`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between mb-3">
+                        {/* Provincia y descripción CPV - arriba del título */}
+                        <div className="mb-2 text-xs text-gray-600">
+                          <span className="flex items-center">
+                            {licitacion.territory_name && (
+                              <>
+                                <span>{licitacion.territory_name}</span>
+                                {licitacion.cpv_code && <span className="mx-2">|</span>}
+                              </>
+                            )}
+                            {licitacion.cpv_code && (
+                              <span>
+                                {cpvDescriptions.get(licitacion.cpv_code)?.description || 
+                                 formatCPVDisplay(licitacion.cpv_code).description}
+                              </span>
+                            )}
+                          </span>
+                        </div>
+
+                        {/* Título de la licitación */}
+                        <div className="flex items-start justify-between mb-2">
                           <h3 className="text-sm font-medium text-gray-900 leading-tight pr-4">
                             {licitacion.project_name}
                           </h3>
                           <div className="text-right flex-shrink-0">
-                            <div className="text-lg font-semibold text-gray-900">
+                            <div className="text-base font-semibold text-gray-900">
                               {licitacion.importe ? formatCurrency(licitacion.importe) : 'No especificado'}
                             </div>
-                            <div className="text-sm text-gray-600 mt-1">
+                            <div className="text-xs text-gray-600 mt-1">
                               Abierto hasta: {licitacion.fecha_fin_presentacion ? formatDate(licitacion.fecha_fin_presentacion) : 'No especificada'}
                             </div>
                           </div>
                         </div>
 
-                        {/* Información principal: Descripción CPV y Provincia */}
-                        <div className="mb-4">
-                          {licitacion.cpv_code && (
-                            <div className="mb-2 flex items-start space-x-2">
-                              <Tag className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
-                              <span className="text-sm font-medium text-gray-900">
-                                {cpvDescriptions.get(licitacion.cpv_code)?.description || 
-                                 formatCPVDisplay(licitacion.cpv_code).description}
-                              </span>
-                            </div>
-                          )}
-                          {licitacion.territory_name && (
-                            <div className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-800 space-x-1">
-                              <MapPin className="w-3 h-3" />
-                              <span>{licitacion.territory_name}</span>
-                            </div>
-                          )}
-                        </div>
+                        {/* Organismo - justo debajo del título */}
+                        {licitacion.contracting_party_name && (
+                          <div className="mb-4 text-xs text-gray-500">
+                            {licitacion.contracting_party_name}
+                          </div>
+                        )}
 
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            {licitacion.contracting_party_name && (
-                              <div className="mb-3">
-                                <dt className="text-sm font-medium text-gray-500 flex items-center space-x-1">
-                                  <Building2 className="w-3 h-3" />
-                                  <span>Organismo</span>
-                                </dt>
-                                <dd className="mt-1 text-sm text-gray-900">{licitacion.contracting_party_name}</dd>
-                              </div>
+                        {/* Información técnica secundaria y botón */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3 text-xs text-gray-500">
+                            {licitacion.nuts_code && (
+                              <span>NUTS: {licitacion.nuts_code}</span>
                             )}
-                            
-                            {/* Información técnica secundaria */}
-                            <div className="flex items-center space-x-3 text-xs text-gray-500">
-                              {licitacion.cpv_code && (
-                                <span>CPV: {licitacion.cpv_code}</span>
-                              )}
-                              {licitacion.nuts_code && (
-                                <span>NUTS: {licitacion.nuts_code}</span>
-                              )}
-                            </div>
+                            {licitacion.cpv_code && (
+                              <span>CPV: {licitacion.cpv_code}</span>
+                            )}
                           </div>
                           <div className="flex-shrink-0">
                             <Button 
