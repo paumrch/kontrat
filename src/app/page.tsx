@@ -1,75 +1,82 @@
 'use client'
 
 import { useAuth } from "@/contexts/AuthContext";
-import FeatureCard from "@/components/FeatureCard";
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function Home() {
   const { user, loading } = useAuth();
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push('/content')
+    }
+  }, [user, loading, router])
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-sm text-muted-foreground">Cargando...</div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-sm text-gray-600">Cargando...</div>
+      </div>
+    );
+  }
+
+  if (user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-sm text-gray-600">Redirigiendo...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-8 pb-20 sm:p-20">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-20">
-          <h1 className="text-3xl font-medium mb-4 text-foreground tracking-tight">
-            {user ? `Bienvenido, ${user.email}` : 'Kontrat'}
-          </h1>
-          <p className="text-sm text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-            {user 
-              ? 'Has accedido exitosamente a tu cuenta. Explora las funcionalidades disponibles.'
-              : 'A production-grade application built with Next.js 15, Turbopack, TypeScript, Tailwind CSS, shadcn/ui and Supabase'
-            }
-          </p>
-        </div>
-
-        <div className="mb-20">
-          <FeatureCard />
-        </div>
-
-        {!user && (
-          <div className="space-y-6 mb-20 max-w-2xl mx-auto">
-            <h2 className="text-lg font-medium text-foreground text-center">Getting Started</h2>
-            <ol className="space-y-3 text-sm text-muted-foreground">
-              <li className="flex gap-3">
-                <span className="text-foreground font-medium">1.</span>
-                Configure your Supabase project
-              </li>
-              <li className="flex gap-3">
-                <span className="text-foreground font-medium">2.</span>
-                Update environment variables
-              </li>
-              <li className="flex gap-3">
-                <span className="text-foreground font-medium">3.</span>
-                Define your database schema
-              </li>
-              <li className="flex gap-3">
-                <span className="text-foreground font-medium">4.</span>
-                Start building your application
-              </li>
-            </ol>
-          </div>
-        )}
-
-        {user && (
+    <div className="min-h-screen bg-white">
+      <div className="pt-20 pb-16 sm:pt-24 sm:pb-20">
+        <div className="max-w-4xl mx-auto px-6 sm:px-8">
           <div className="text-center">
-            <div className="p-6 border rounded-lg">
-              <h3 className="text-lg font-medium mb-2">Panel de Usuario</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Cuenta: {user.email}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Registrado: {new Date(user.created_at).toLocaleDateString('es-ES')}
-              </p>
+            <h1 className="text-4xl font-light text-gray-900 tracking-tight mb-6">
+              Kontrat
+            </h1>
+            <p className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+              Sistema de gestión y consulta de licitaciones públicas españolas
+            </p>
+            
+            <div className="space-y-4">
+              <div className="inline-flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={() => router.push('/login')}
+                  className="px-6 py-3 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors"
+                >
+                  Iniciar Sesión
+                </button>
+                <button
+                  onClick={() => router.push('/register')}
+                  className="px-6 py-3 bg-white text-gray-900 text-sm font-medium rounded-md border border-gray-300 hover:bg-gray-50 transition-colors"
+                >
+                  Registrarse
+                </button>
+              </div>
             </div>
           </div>
-        )}
+
+          <div className="mt-20 text-center">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
+              <div className="text-center">
+                <h3 className="text-sm font-medium text-gray-900 mb-2">Licitaciones Actuales</h3>
+                <p className="text-sm text-gray-600">Consulta todas las licitaciones públicas activas</p>
+              </div>
+              <div className="text-center">
+                <h3 className="text-sm font-medium text-gray-900 mb-2">Filtros Avanzados</h3>
+                <p className="text-sm text-gray-600">Filtra por categoría, provincia y presupuesto</p>
+              </div>
+              <div className="text-center">
+                <h3 className="text-sm font-medium text-gray-900 mb-2">Información Detallada</h3>
+                <p className="text-sm text-gray-600">Accede a toda la información de cada licitación</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
