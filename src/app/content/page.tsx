@@ -337,20 +337,6 @@ export default function ContentPage() {
               Limpiar Filtros
             </Button>
           </div>
-
-          {/* Estadísticas */}
-          <div className="p-6 border-t border-gray-200 bg-gray-50">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-semibold text-gray-900">{licitaciones.length}</div>
-                <div className="text-xs text-gray-600">Total</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-semibold text-gray-900">{filteredLicitaciones.length}</div>
-                <div className="text-xs text-gray-600">Filtradas</div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Contenido Principal */}

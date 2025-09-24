@@ -29,6 +29,59 @@ export function cleanCPVCode(code: string): string {
   return cleanCode;
 }
 
+// Función para detectar y limpiar descripciones problemáticas
+function cleanCPVDescription(description: string, code: string): string {
+  // Detectar patrones de "Sin descripción disponible"
+  if (description.includes('Sin descripción disponible') || 
+      description.includes('sin descripción') ||
+      description.toLowerCase().includes('no disponible') ||
+      description.trim() === '' ||
+      description === code) {
+    
+    const cleanCode = cleanCPVCode(code);
+    
+    // Mapeo de códigos problemáticos conocidos
+    const emergencyMapping: { [key: string]: string } = {
+      '30192700': 'Fotocopiadoras',
+      '30190000': 'Diversos tipos de maquinaria y equipos de oficina',
+      '24111300': 'Óxido de etileno',
+      '72000000': 'Servicios de tecnología de la información',
+      '45000000': 'Trabajos de construcción',
+      '48000000': 'Paquetes de software y sistemas de información',
+      '30000000': 'Maquinaria y equipos informáticos, de oficina y de telecomunicación',
+      '24000000': 'Productos químicos',
+    };
+    
+    // Buscar coincidencia exacta
+    if (emergencyMapping[cleanCode]) {
+      return emergencyMapping[cleanCode];
+    }
+    
+    // Buscar por jerarquía CPV (códigos padre)
+    if (cleanCode.length === 8) {
+      // Intentar con 6 dígitos (clase)
+      const code6 = cleanCode.substring(0, 6) + '00';
+      if (emergencyMapping[code6]) {
+        return emergencyMapping[code6];
+      }
+      
+      // Intentar con 4 dígitos (grupo)  
+      const code4 = cleanCode.substring(0, 4) + '0000';
+      if (emergencyMapping[code4]) {
+        return emergencyMapping[code4];
+      }
+      
+      // Intentar con 2 dígitos (división)
+      const code2 = cleanCode.substring(0, 2) + '000000';
+      if (emergencyMapping[code2]) {
+        return emergencyMapping[code2];
+      }
+    }
+  }
+  
+  return description;
+}
+
 export async function getCPVInfo(code: string): Promise<CPVInfo> {
   try {
     // Usar la función mejorada para limpiar el código
@@ -147,6 +200,11 @@ export function getCPVInfoSync(code: string): CPVInfo {
     '24130000': 'Otros productos químicos básicos inorgánicos',
     '24140000': 'Otros productos químicos básicos orgánicos',
     '24150000': 'Productos químicos diversos',
+    '30190000': 'Diversos tipos de maquinaria y equipos de oficina',
+    '30192700': 'Fotocopiadoras',
+    '30192710': 'Máquinas fotocopiadoras',
+    '30192800': 'Equipos de impresión',
+    '30192900': 'Equipos de escaneado y digitalización',
     '30200000': 'Equipos informáticos y suministros',
     '30230000': 'Equipos terminales de ordenador',
     '31600000': 'Motores eléctricos, generadores y transformadores',
@@ -209,14 +267,18 @@ export function getCPVInfoSync(code: string): CPVInfo {
 
 export function formatCPVDisplay(code: string): { code: string; description: string } {
   const cpvInfo = getCPVInfoSync(code);
+  
+  // Limpiar descripción problemática usando la función auxiliar
+  const cleanedDescription = cleanCPVDescription(cpvInfo.description, code);
+  
   return {
     code: cpvInfo.code,
-    description: cpvInfo.description
+    description: cleanedDescription
   };
 }
 
 // Componente para mostrar el CPV formateado
 export function formatCPVForDisplay(code: string): string {
-  const cpvInfo = getCPVInfoSync(code);
-  return `${cpvInfo.code} - ${cpvInfo.description}`;
+  const result = formatCPVDisplay(code);
+  return `${result.code} - ${result.description}`;
 }
