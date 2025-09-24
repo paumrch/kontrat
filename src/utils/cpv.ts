@@ -6,6 +6,39 @@ export interface CPVInfo {
 // Cache de CPVs para evitar múltiples requests
 const cpvCache = new Map<string, CPVInfo>();
 
+// Cache para el JSON oficial de CPVs
+let officialCPVs: { [key: string]: string } | null = null;
+
+// Función para cargar los CPVs oficiales del JSON
+async function loadOfficialCPVs(): Promise<{ [key: string]: string }> {
+  if (officialCPVs !== null) {
+    return officialCPVs;
+  }
+
+  try {
+    const response = await fetch('/CPVs.json');
+    if (response.ok) {
+      const cpvArray = await response.json();
+      officialCPVs = {};
+      
+      cpvArray.forEach((item: { CPV: string; DESCRIPCION: string }) => {
+        // Limpiar el código CPV (remover sufijo como -1, -2, etc.)
+        const cleanCode = cleanCPVCode(item.CPV.split('-')[0]);
+        officialCPVs![cleanCode] = item.DESCRIPCION;
+      });
+      
+      console.log(`Cargados ${Object.keys(officialCPVs).length} CPVs oficiales`);
+      return officialCPVs;
+    }
+  } catch (error) {
+    console.warn('Error cargando CPVs oficiales:', error);
+  }
+  
+  // Fallback a mapeo local si falla la carga
+  officialCPVs = {};
+  return officialCPVs;
+}
+
 // Función mejorada para limpiar códigos CPV
 export function cleanCPVCode(code: string): string {
   if (!code) return '';
@@ -100,6 +133,21 @@ export async function getCPVInfo(code: string): Promise<CPVInfo> {
       return cpvCache.get(cacheKey)!;
     }
     
+    // Cargar CPVs oficiales si no están en caché
+    if (!officialCPVs) {
+      await loadOfficialCPVs();
+    }
+    
+    // Usar CPVs oficiales si están disponibles
+    if (officialCPVs && officialCPVs[cleanCode]) {
+      const cpvInfo: CPVInfo = {
+        code: code,
+        description: officialCPVs[cleanCode]
+      };
+      cpvCache.set(cacheKey, cpvInfo);
+      return cpvInfo;
+    }
+    
     try {
       const response = await fetch(`/api/cpv?code=${cleanCode}`);
       if (response.ok) {
@@ -144,8 +192,18 @@ export function getCPVInfoSync(code: string): CPVInfo {
     return cpvCache.get(cacheKey)!;
   }
   
-  // Mapeo ampliado de CPVs comunes en español
-  const commonCPVs: { [key: string]: string } = {
+  // Intentar usar CPVs oficiales si están cargados
+  if (officialCPVs && officialCPVs[cleanCode]) {
+    const cpvInfo: CPVInfo = {
+      code: code,
+      description: officialCPVs[cleanCode]
+    };
+    cpvCache.set(cacheKey, cpvInfo);
+    return cpvInfo;
+  }
+  
+  // Fallback a mapeo local para compatibilidad
+  const localCPVs: { [key: string]: string } = {
     // Divisiones principales (2 dígitos)
     '03000000': 'Productos de la agricultura, ganadería, pesca, silvicultura',
     '09000000': 'Derivados del petróleo, combustibles, electricidad y otras fuentes de energía',
@@ -210,6 +268,12 @@ export function getCPVInfoSync(code: string): CPVInfo {
     '31600000': 'Motores eléctricos, generadores y transformadores',
     '32500000': 'Equipos de telecomunicación',
     '33100000': 'Equipos médicos',
+    '33190000': 'Productos médicos diversos',
+    '33192000': 'Productos médicos desechables',
+    '33192300': 'Material sanitario desechable',
+    '33192310': 'Jeringas y agujas desechables',
+    '33192320': 'Guantes médicos desechables',
+    '33192400': 'Productos de higiene médica',
     '33600000': 'Productos farmacéuticos',
     '34100000': 'Vehículos a motor',
     '34700000': 'Aeronaves, vehículos espaciales y equipos afines',
@@ -252,7 +316,7 @@ export function getCPVInfoSync(code: string): CPVInfo {
     '98300000': 'Servicios de organizaciones asociativas'
   };
   
-  const description = commonCPVs[cleanCode];
+  const description = localCPVs[cleanCode];
   const finalDescription = description || `CPV ${cleanCode} - Sin descripción disponible`;
   
   const cpvInfo: CPVInfo = {
@@ -275,6 +339,17 @@ export function formatCPVDisplay(code: string): { code: string; description: str
     code: cpvInfo.code,
     description: cleanedDescription
   };
+}
+
+// Función para inicializar CPVs oficiales del lado del cliente
+export async function initializeCPVs(): Promise<void> {
+  if (typeof window !== 'undefined' && !officialCPVs) {
+    try {
+      await loadOfficialCPVs();
+    } catch (error) {
+      console.warn('Error inicializando CPVs oficiales:', error);
+    }
+  }
 }
 
 // Componente para mostrar el CPV formateado

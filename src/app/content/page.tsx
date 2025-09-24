@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider'
 import { ExternalLink, Filter, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Database } from '@/types/database.types'
-import { formatCPVDisplay } from '@/utils/cpv'
+import { formatCPVDisplay, initializeCPVs } from '@/utils/cpv'
 import { useCPVDescriptions } from '@/hooks/useCPVDescriptions'
 
 type Licitacion = Database['public']['Tables']['licitaciones']['Row']
@@ -175,6 +175,9 @@ export default function ContentPage() {
       return
     }
 
+    // Inicializar CPVs oficiales en paralelo
+    initializeCPVs().catch(console.warn)
+    
     loadData()
   }, [user, loading, router, loadData])
 
