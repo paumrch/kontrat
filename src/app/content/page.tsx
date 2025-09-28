@@ -18,6 +18,7 @@ interface Filters {
   cpvCodes: string[]
   cpvSearch: string
   province: string
+  busqueda: string
   minAmount: number
   maxAmount: number
 }
@@ -95,6 +96,7 @@ export default function ContentPage() {
     cpvCodes: [],
     cpvSearch: '',
     province: '',
+    busqueda: '',
     minAmount: 0,
     maxAmount: 1000000
   })
@@ -144,10 +146,13 @@ export default function ContentPage() {
       const matchesCPV = filters.cpvCodes.length === 0 || 
         (licitacion.cpv_code && filters.cpvCodes.some(code => licitacion.cpv_code?.startsWith(code)))
       const matchesProvince = !filters.province || licitacion.nuts_code?.includes(filters.province)
+      const matchesBusqueda = !filters.busqueda || 
+        licitacion.contracting_party_name?.toLowerCase().includes(filters.busqueda.toLowerCase()) ||
+        licitacion.project_name?.toLowerCase().includes(filters.busqueda.toLowerCase())
       const amount = licitacion.importe || 0
       const matchesAmount = amount >= filters.minAmount && amount <= filters.maxAmount
       
-      return matchesCPV && matchesProvince && matchesAmount
+      return matchesCPV && matchesProvince && matchesBusqueda && matchesAmount
     })
   }, [licitaciones, filters])
 
@@ -201,6 +206,7 @@ export default function ContentPage() {
       cpvCodes: [],
       cpvSearch: '',
       province: '',
+      busqueda: '',
       minAmount: 0,
       maxAmount: 1000000
     })
@@ -298,7 +304,7 @@ export default function ContentPage() {
             <div className="space-y-2">
               <label className="text-xs font-medium text-gray-900">Provincia</label>
               <Select value={filters.province || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, province: value === 'all' ? '' : value }))}>
-                <SelectTrigger className="bg-white border-gray-200 text-gray-900">
+                <SelectTrigger className="bg-white border-gray-200 text-gray-900 w-full">
                   <SelectValue placeholder="Todas las provincias" />
                 </SelectTrigger>
                 <SelectContent>
@@ -308,6 +314,18 @@ export default function ContentPage() {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Filtro Búsqueda General */}
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-gray-900">Búsqueda</label>
+              <input
+                type="text"
+                placeholder="Buscar por organismo o título..."
+                value={filters.busqueda}
+                onChange={(e) => setFilters(prev => ({ ...prev, busqueda: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-200 rounded-md text-xs text-gray-900 placeholder-gray-500 bg-white focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+              />
             </div>
 
             {/* Filtro Económico */}
