@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { LogOut, User } from 'lucide-react'
@@ -12,8 +13,14 @@ export default function Header() {
     <header className="border-b border-gray-200 bg-white w-full fixed top-0 z-50">
       <div className="w-full px-4">
         <div className="flex justify-between items-center h-14">
-          <Link href="/" className="text-lg font-semibold text-gray-900">
-            MRCH
+          <Link href="/" className="flex items-center">
+            <Image 
+              src="/MRCH_logo.svg" 
+              alt="MRCH" 
+              width={80} 
+              height={28}
+              className="h-7 w-auto"
+            />
           </Link>
           
           <nav className="flex items-center gap-4">

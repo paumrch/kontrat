@@ -1,10 +1,8 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { Database } from '@/types/database.types'
 import { PaginationConfig } from '@/lib/shared/licitaciones-types'
 import { applyFiltersToSupabase } from './buildLicitacionesQuery'
 import { describeCpv, getCpvDict } from './cpv-dict'
-
-import type { LicitacionesFilters, OrderBy } from '@/lib/shared/licitaciones-types'
 
 type Licitacion = Database['public']['Tables']['licitaciones']['Row']
 
@@ -30,7 +28,7 @@ const getServerClient = () => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   
-  return createClient<Database>(supabaseUrl, supabaseKey)
+  return createSupabaseClient<Database>(supabaseUrl, supabaseKey)
 }
 
 /**

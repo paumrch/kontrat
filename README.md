@@ -1,30 +1,34 @@
-# MRCH - Sistema de Licitaciones Públicas V2
+# MRCH - Sistema de Licitaciones Públicas V2.1
 
 Una aplicación de producción moderna para la gestión y consulta de licitaciones públicas españolas, construida con las últimas tecnologías web.
 
-## ✨ Características V2
+## ✨ Características V2.1
 
 ### 🔍 **Búsqueda Avanzada**
-- **Búsqueda multíbado**: Título, organismo, código CPV, descripción CPV, código NUTS, territorio
+- **Búsqueda multícampo**: Título, organismo, código CPV, descripción CPV, código NUTS, territorio
 - **Búsqueda server-side** optimizada con rendimiento de base de datos
 - **Debounce de 300ms** para evitar consultas excesivas
 - **Sincronización con URL** para compartir búsquedas
 
 ### 🎯 **Filtros Inteligentes**  
 - **SSR (Server-Side Rendering)** completo para filtros en tiempo real
+- **Filtro de Provincias**: Selector con 52 provincias españolas ordenadas alfabéticamente
+- **Componentes shadcn/ui**: Select component moderno con mejor UX
 - **Paginación optimizada** con streaming de datos (100 registros/página)
-- **Mapeo NUTS automatizado** con códigos de territorio españoles
+- **Mapeo NUTS automatizado** con códigos de territorio españoles (ES111-ES702)
 - **Descriptions CPV precomputadas** para mejor rendimiento
 
 ### 💻 **Interfaz Renovada**
 - **Layout minimalista** sin sidebar, filtros integrados arriba
-- **Footer horizontal** con logo MRCH y copyright
+- **Logo MRCH profesional** en header y footer con optimización SVG
+- **Footer horizontal** con logo y copyright
 - **Bordes suaves (rounded-sm)** para una apariencia más refinada
 - **Diseño responsive** optimizado para móvil y desktop
 
 ### ⚡ **Performance & Arquitectura**
 - **Next.js 15 con Turbopack** para builds ultra-rápidos
 - **Componentes Server/Client híbridos** con Suspense streaming
+- **Sin errores de hidratación** con renderizado condicional
 - **Single request por filtro** con optimización de consultas SQL
 - **Paginación real server-side** (no mock client-side)
 
@@ -173,6 +177,22 @@ El proyecto incluye un sistema de autenticación completo con:
 ### Otras plataformas
 
 Asegúrate de configurar las variables de entorno en tu plataforma de despliegue.
+## 📋 Changelog
+
+### V2.1.0 - Diciembre 2025
+- ✅ **Filtro de Provincias**: Selector con las 52 provincias españolas ordenadas alfabéticamente
+- ✅ **Componente shadcn/ui**: Implementación del Select component moderno
+- ✅ **Logo Profesional**: Integración del logo MRCH en formato SVG en header y footer
+- ✅ **Optimización de Hidratación**: Eliminación de errores de server-client mismatch
+- ✅ **Limpieza de Código**: Eliminación de componentes obsoletos (FilterSidebar)
+- ✅ **Código NUTS Mejorado**: Soporte completo para códigos nivel 3 (provincias individuales)
+
+### V2.0.0 - Noviembre 2025
+- ✅ **Sistema de Filtros SSR**: Filtrado en tiempo real sin recarga manual
+- ✅ **Búsqueda Expandida**: 6 campos simultáneos con debouncing
+- ✅ **UI Renovada**: Layout horizontal, eliminación de sidebar
+- ✅ **Performance**: Optimización de consultas SQL y paginación server-side
+- ✅ **Next.js 15**: Migración a App Router con Turbopack
 
 ## 🤝 Contribuir
 

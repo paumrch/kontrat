@@ -4,7 +4,6 @@
 export { default as FilterForm } from './FilterForm'
 export { default as LicitacionesTable } from './LicitacionesTable'  
 export { default as LicitacionesLayout } from './LicitacionesLayout'
-export { default as FilterSidebar } from './FilterSidebar'
 export { default as LicitacionesSkeleton } from './LicitacionesSkeleton'
 
 // Re-export de tipos para conveniencia
@@ -14,7 +13,7 @@ export type { Database } from '@/types/database.types'
  * Interfaz de filtros idéntica a /content
  * Mantiene compatibilidad total con la UI existente
  */
-export interface Filters {
+export interface LicitacionesFilters {
   cpvCodes: string[]
   cpvSearch: string
   province: string

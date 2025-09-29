@@ -3,7 +3,7 @@
  * después de las correcciones SSR y CPV implementadas
  */
 
-import { buildFiltersFromSearchParams, applyFiltersToSupabase } from '@/lib/server/buildLicitacionesQuery'
+import { buildFiltersFromSearchParams } from '@/lib/server/buildLicitacionesQuery'
 import { describeCpv, getCpvDict, normalizeCPVCode } from '@/lib/server/cpv-dict'
 
 describe('✅ Filtros SSR - Funcionamiento Post-Fix', () => {
