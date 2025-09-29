@@ -1,26 +1,42 @@
-# Kontrat
+# MRCH - Sistema de Licitaciones Públicas V2
 
-A production-grade application built with modern web technologies, following Next Forge design principles.
+Una aplicación de producción moderna para la gestión y consulta de licitaciones públicas españolas, construida con las últimas tecnologías web.
+
+## ✨ Características V2
+
+### 🔍 **Búsqueda Avanzada**
+- **Búsqueda multíbado**: Título, organismo, código CPV, descripción CPV, código NUTS, territorio
+- **Búsqueda server-side** optimizada con rendimiento de base de datos
+- **Debounce de 300ms** para evitar consultas excesivas
+- **Sincronización con URL** para compartir búsquedas
+
+### 🎯 **Filtros Inteligentes**  
+- **SSR (Server-Side Rendering)** completo para filtros en tiempo real
+- **Paginación optimizada** con streaming de datos (100 registros/página)
+- **Mapeo NUTS automatizado** con códigos de territorio españoles
+- **Descriptions CPV precomputadas** para mejor rendimiento
+
+### 💻 **Interfaz Renovada**
+- **Layout minimalista** sin sidebar, filtros integrados arriba
+- **Footer horizontal** con logo MRCH y copyright
+- **Bordes suaves (rounded-sm)** para una apariencia más refinada
+- **Diseño responsive** optimizado para móvil y desktop
+
+### ⚡ **Performance & Arquitectura**
+- **Next.js 15 con Turbopack** para builds ultra-rápidos
+- **Componentes Server/Client híbridos** con Suspense streaming
+- **Single request por filtro** con optimización de consultas SQL
+- **Paginación real server-side** (no mock client-side)
 
 ## Technology Stack
 
-- **Framework**: Next.js 15 with Turbopack
+- **Framework**: Next.js 15 con Turbopack
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS 4
+- **Styling**: Tailwind CSS 4  
 - **Components**: shadcn/ui
-- **Backend**: Supabase
+- **Backend**: Supabase (PostgreSQL)
 - **Authentication**: Supabase Auth
-- **Fonts**: Geist Sans & Mono
-
-## Design System
-
-This project follows the Next Forge design system principles:
-
-- Clean, minimal UI without emojis
-- Small typography with careful hierarchy
-- Limited color palette: black, white, and grays
-- Consistent spacing and subtle shadows
-- Modern, professional aesthetic
+- **Performance**: SSR + RSC + Streaming
 
 ## Prerequisites
 
@@ -82,21 +98,36 @@ This project follows the Next Forge design system principles:
    npx supabase gen types typescript --project-id tu-project-id > src/types/database.types.ts
    ```
 
-## 📁 Estructura del Proyecto
+## 📁 Estructura del Proyecto V2
 
 ```text
 src/
-├── app/                    # App Router de Next.js
-├── components/             # Componentes React
-│   ├── ui/                # Componentes de shadcn/ui
-│   └── AuthForm.tsx       # Componente de autenticación
-├── hooks/                 # Hooks personalizados
-│   └── useAuth.ts         # Hook de autenticación
-├── lib/                   # Librerías y utilidades
-│   ├── utils.ts           # Utilidades de shadcn/ui
-│   └── supabase.ts        # Cliente de Supabase
-└── types/                 # Tipos de TypeScript
-    └── database.types.ts  # Tipos de la base de datos
+├── app/                                    # App Router Next.js 15
+│   ├── (dashboard)/licitaciones/          # Página principal de licitaciones
+│   │   ├── _components/                   # Componentes específicos
+│   │   │   ├── FilterForm.tsx            # Formulario de filtros expandido
+│   │   │   ├── LicitacionesTable.tsx     # Tabla con paginación SSR
+│   │   │   └── LicitacionesSkeleton.tsx  # Loading states
+│   │   └── page.tsx                      # Página SSR optimizada
+│   ├── api/cpv/                          # API route para códigos CPV
+│   ├── login/ & register/                # Autenticación
+│   └── layout.tsx                        # Layout global
+├── components/                            # Componentes globales
+│   ├── ui/                               # shadcn/ui components
+│   ├── Header.tsx                        # Header con branding MRCH
+│   └── footer.tsx                        # Footer minimalista V2
+├── lib/
+│   ├── server/                           # Lógica server-side
+│   │   ├── getLicitacionesPage.ts       # Paginación optimizada
+│   │   ├── buildLicitacionesQuery.ts    # Constructor de queries
+│   │   └── cpv-dict.ts                  # Diccionario CPV
+│   ├── shared/                          # Tipos compartidos
+│   └── supabase.ts                      # Cliente Supabase
+├── utils/
+│   ├── nuts.ts                          # Mapeo NUTS España
+│   └── cpv.ts                           # Utilidades CPV
+└── types/
+    └── database.types.ts                # Tipos de DB autogenerados
 ```
 
 ## 🎨 Componentes Disponibles

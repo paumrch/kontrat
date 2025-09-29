@@ -10,7 +10,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.push('/content')
+      router.push('/licitaciones')
     }
   }, [user, loading, router])
 
@@ -45,10 +45,10 @@ export default function Home() {
             <div className="space-y-4">
               <div className="inline-flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={() => router.push('/login')}
+                  onClick={() => router.push('/licitaciones')}
                   className="px-6 py-3 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-gray-800 transition-colors"
                 >
-                  Iniciar Sesión
+                  Ver Licitaciones
                 </button>
                 <button
                   onClick={() => router.push('/register')}
